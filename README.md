@@ -90,7 +90,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/multi-mind-chat.git
+git clone [https://github.com/your-username/multi-mind-chat.git](https://github.com/zhanghxiao/multi-mind-chat)
 cd multi-mind-chat
 
 # 安装依赖（国内同学推荐使用镜像源）
