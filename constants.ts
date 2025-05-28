@@ -108,7 +108,7 @@ export const DEFAULT_ROLES: AiRole[] = [
     modelId: 'gpt-4-mini-default',
     isActive: true
     },
-  //spark - 偶尔闪现灵感型
+//spark - 偶尔闪现灵感型
   {
     id: 'spark-default',
     name: 'Spark',
