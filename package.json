@@ -1,12 +1,17 @@
 {
-  "name": "dual-ai-chat（融合3）",
+  "name": "multi-mind-chat",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "A multi-AI collaboration chat application with preset channels for immediate use",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docker:build": "./build.sh",
+    "docker:run": "docker run -d -p 7860:7860 --name multi-mind-chat --restart unless-stopped multi-mind-chat:latest",
+    "docker:stop": "docker stop multi-mind-chat && docker rm multi-mind-chat",
+    "docker:logs": "docker logs -f multi-mind-chat"
   },
   "dependencies": {
     "@google/genai": "^1.0.1",
@@ -21,5 +26,24 @@
     "@types/react": "^19.1.5",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
+  },
+  "keywords": [
+    "ai",
+    "chat",
+    "multi-ai",
+    "collaboration",
+    "openai",
+    "gpt",
+    "react",
+    "typescript"
+  ],
+  "author": "Multi-Mind Chat Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhanghxiao/multi-mind-chat.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

@@ -296,17 +296,20 @@ const App: React.FC = () => {
 
   const getWelcomeMessageText = () => {
     const modeDescription = discussionMode === DiscussionMode.FixedTurns 
-      ? `固定轮次对话 (${manualFixedTurns}轮)` 
-      : "AI驱动对话";
+      ? "AI驱动对话"
+      : `固定轮次对话 (${manualFixedTurns}轮)`;
     
     const roleNames = activeRoles.map(role => role.name).join(' 和 ');
     const roleCount = activeRoles.length;
     const channelCount = channels.length;
+    const configuredChannels = channels.filter(ch => ch.apiKey?.trim()).length;
     
     if (channelCount === 0) {
       return `欢迎使用Multi-Mind Chat 智囊团！请先配置API渠道。点击设置按钮开始配置。`;
+    } else if (configuredChannels === 0) {
+      return `欢迎使用Multi-Mind Chat 智囊团！检测到 ${channelCount} 个API渠道，但尚未配置API密钥。请点击设置按钮，为渠道配置有效的API密钥。`;
     } else if (roleCount === 0) {
-      return `欢迎使用Multi-Mind Chat 智囊团！已配置 ${channelCount} 个API渠道，请继续配置AI角色和模型。点击设置按钮开始配置。`;
+      return `欢迎使用Multi-Mind Chat 智囊团！已配置 ${configuredChannels} 个可用API渠道，请继续配置AI角色。点击设置按钮添加角色。`;
     } else if (roleCount === 1) {
       return `欢迎使用Multi-Mind Chat 智囊团！当前模式: ${modeDescription}。当前只有一个活跃角色: ${roleNames}。建议添加更多角色以获得更好的协作体验。`;
     } else {
@@ -496,7 +499,8 @@ const App: React.FC = () => {
             durationMs: isComplete ? (performance.now() - (currentQueryStartTimeRef.current || 0)) : undefined
           } : msg
         ));
-      }
+      },
+      currentRole.model.maxTokens  // 传递模型配置的 maxTokens
     ).then(response => {
       if (cancelRequestRef.current) {
         setIsDiscussionActive(false);
@@ -566,8 +570,8 @@ const App: React.FC = () => {
 
       setCurrentDiscussion(newState);
       
-      // 继续处理下一个角色
-      setTimeout(() => processNextRole(newState), 100);
+      // 直接处理下一个角色，不使用setTimeout延迟
+      processNextRole(newState);
     }).catch(error => {
       console.error("处理AI响应时出错:", error);
       addMessage(`错误: ${error instanceof Error ? error.message : "处理响应时发生未知错误"}`, MessageSender.System, MessagePurpose.SystemNotification);
@@ -618,7 +622,8 @@ const App: React.FC = () => {
             durationMs: isComplete ? (performance.now() - (currentQueryStartTimeRef.current || 0)) : undefined
           } : msg
         ));
-      }
+      },
+      finalAnswerRole.model.maxTokens  // 传递模型配置的 maxTokens
     ).then(finalResponse => {
       if (cancelRequestRef.current) {
         setIsDiscussionActive(false);
@@ -677,6 +682,13 @@ const App: React.FC = () => {
     
     if (channels.length === 0) {
       addMessage("请先配置API渠道。点击设置按钮添加渠道。", MessageSender.System, MessagePurpose.SystemNotification);
+      return;
+    }
+    
+    // 检查是否有配置了API密钥的渠道
+    const configuredChannels = channels.filter(ch => ch.apiKey?.trim());
+    if (configuredChannels.length === 0) {
+      addMessage("所有API渠道都缺少API密钥。请在设置中为至少一个渠道配置有效的API密钥。", MessageSender.System, MessagePurpose.SystemNotification);
       return;
     }
     

@@ -22,7 +22,9 @@ import {
   Eye,
   EyeOff,
   Star,
-  StarOff
+  StarOff,
+  Shield,
+  Lock
 } from 'lucide-react';
 
 interface ModelConfigManagerProps {
@@ -100,6 +102,19 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
     }));
   };
 
+  // 获取渠道显示的API密钥内容
+  const getDisplayApiKey = (channel: ApiChannel): string => {
+    if (channel.isProtected) {
+      return '●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● (受保护)';
+    }
+    return channel.apiKey || '未设置';
+  };
+
+  // 检查用户是否可以修改此渠道
+  const canEditChannel = (channel: ApiChannel): boolean => {
+    return channel.isCustom || !channel.isProtected;
+  };
+
   // ============ 渠道管理 ============
 
   const handleSaveChannel = () => {
@@ -159,6 +174,18 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
       showMessage('success', '默认渠道设置成功');
     } catch (error) {
       showMessage('error', '设置默认渠道失败');
+    }
+  };
+
+  const handleEditChannel = (channel: ApiChannel) => {
+    if (channel.isProtected && !channel.isCustom) {
+      // 对于受保护的预置渠道，创建一个编辑副本，但不显示真实的API密钥
+      setEditingChannel({
+        ...channel,
+        apiKey: '' // 不显示受保护的密钥
+      });
+    } else {
+      setEditingChannel(channel);
     }
   };
 
@@ -481,6 +508,7 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                       onClick={() => setEditingChannel({ 
                         isNew: true, 
                         isDefault: false,
+                        isProtected: false,
                         timeout: 30000,
                         baseUrl: 'https://api.openai.com/v1'
                       })}
@@ -501,29 +529,39 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                               {channel.isDefault && (
                                 <Star size={16} className="text-yellow-400" title="默认渠道" />
                               )}
+                              {channel.isProtected && (
+                                <Shield size={16} className="text-green-400" title="受保护配置" />
+                              )}
                             </div>
                             <p className="text-gray-400 text-sm">{channel.baseUrl}</p>
                             <div className="flex items-center space-x-2 mt-2">
                               <Key size={12} className="text-gray-500" />
                               <span className="text-gray-500 text-xs">
-                                {showApiKeys[channel.id] 
+                                {channel.isProtected ? (
+                                  <span className="flex items-center space-x-1">
+                                    <Lock size={12} />
+                                    <span>受保护密钥 (已预置)</span>
+                                  </span>
+                                ) : showApiKeys[channel.id] 
                                   ? channel.apiKey || '未设置'
                                   : '••••••••••••••••••••••••••••••••••••••••'
                                 }
                               </span>
-                              <button
-                                onClick={() => toggleApiKeyVisibility(channel.id)}
-                                className="text-gray-500 hover:text-gray-300"
-                              >
-                                {showApiKeys[channel.id] ? <EyeOff size={12} /> : <Eye size={12} />}
-                              </button>
+                              {!channel.isProtected && (
+                                <button
+                                  onClick={() => toggleApiKeyVisibility(channel.id)}
+                                  className="text-gray-500 hover:text-gray-300"
+                                >
+                                  {showApiKeys[channel.id] ? <EyeOff size={12} /> : <Eye size={12} />}
+                                </button>
+                              )}
                             </div>
                             {channel.description && (
                               <p className="text-gray-500 text-xs mt-1">{channel.description}</p>
                             )}
                           </div>
                           <div className="flex space-x-1">
-                            {!channel.isDefault && (
+                            {!channel.isDefault && !channel.isProtected && (
                               <button
                                 onClick={() => handleSetDefaultChannel(channel.id)}
                                 className="p-1 text-gray-400 hover:text-yellow-400"
@@ -532,13 +570,15 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                                 <StarOff size={16} />
                               </button>
                             )}
-                            <button
-                              onClick={() => setEditingChannel(channel)}
-                              className="p-1 text-gray-400 hover:text-sky-400"
-                              title="编辑"
-                            >
-                              <Edit3 size={16} />
-                            </button>
+                            {canEditChannel(channel) && (
+                              <button
+                                onClick={() => handleEditChannel(channel)}
+                                className="p-1 text-gray-400 hover:text-sky-400"
+                                title="编辑"
+                              >
+                                <Edit3 size={16} />
+                              </button>
+                            )}
                             {channel.isCustom && (
                               <button
                                 onClick={() => handleDeleteChannel(channel.id)}
@@ -576,6 +616,19 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                       </div>
                     )}
 
+                    {/* 受保护渠道的提示 */}
+                    {editingChannel.isProtected && !editingChannel.isNew && (
+                      <div className="mb-4 p-3 bg-blue-600 rounded">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Shield size={16} className="text-white" />
+                          <span className="text-white font-medium">受保护配置</span>
+                        </div>
+                        <p className="text-white text-sm">
+                          此渠道的API密钥已预置且受到保护，您无法查看或修改密钥内容。如需使用自定义密钥，请创建新的渠道。
+                        </p>
+                      </div>
+                    )}
+
                     <div className="space-y-4">
                       <div>
                         <label className="block text-gray-300 text-sm mb-1">渠道名称</label>
@@ -600,15 +653,27 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-gray-300 text-sm mb-1">API密钥</label>
+                        <label className="block text-gray-300 text-sm mb-1">
+                          API密钥
+                          {editingChannel.isProtected && (
+                            <span className="ml-2 text-xs text-blue-400">(受保护，无法修改)</span>
+                          )}
+                        </label>
                         <div className="relative">
-                          <input
-                            type="password"
-                            value={editingChannel.apiKey || ''}
-                            onChange={(e) => setEditingChannel({ ...editingChannel, apiKey: e.target.value })}
-                            className="w-full bg-gray-700 text-white p-2 rounded text-sm"
-                            placeholder="输入API密钥"
-                          />
+                          {editingChannel.isProtected ? (
+                            <div className="w-full bg-gray-600 text-gray-400 p-2 rounded text-sm flex items-center space-x-2">
+                              <Lock size={16} />
+                              <span>●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● (受保护)</span>
+                            </div>
+                          ) : (
+                            <input
+                              type="password"
+                              value={editingChannel.apiKey || ''}
+                              onChange={(e) => setEditingChannel({ ...editingChannel, apiKey: e.target.value })}
+                              className="w-full bg-gray-700 text-white p-2 rounded text-sm"
+                              placeholder="输入API密钥"
+                            />
+                          )}
                         </div>
                       </div>
 
@@ -804,7 +869,7 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                           <option value="">选择渠道</option>
                           {channels.map((channel) => (
                             <option key={channel.id} value={channel.id}>
-                              {channel.name}
+                              {channel.name} {channel.isProtected && '(受保护)'}
                             </option>
                           ))}
                         </select>
@@ -936,6 +1001,9 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                               </p>
                               <p className="text-gray-500 text-xs">
                                 渠道: {associatedChannel?.name || '未找到渠道'}
+                                {associatedChannel?.isProtected && (
+                                  <span className="ml-1 text-green-400">(受保护)</span>
+                                )}
                               </p>
                             </div>
                             <div className="flex space-x-1">
@@ -1010,6 +1078,7 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                             return (
                               <option key={model.id} value={model.id}>
                                 {model.name} ({channel?.name || '未知渠道'})
+                                {channel?.isProtected && ' - 受保护'}
                               </option>
                             );
                           })}
@@ -1115,6 +1184,9 @@ const ModelConfigManagerComponent: React.FC<ModelConfigManagerProps> = ({
                 <div className="space-y-3">
                   <p className="text-gray-300 text-sm">
                     所有配置数据存储在浏览器的localStorage中。清除浏览器数据可能会导致配置丢失。建议定期导出配置进行备份。
+                  </p>
+                  <p className="text-blue-300 text-sm">
+                    注意：受保护的预置API密钥不会包含在导出的配置中，以确保安全性。
                   </p>
                   <div className="flex space-x-3">
                     <button

@@ -7,6 +7,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, '.'),
     }
   },
+  define: {
+    'import.meta.env.VITE_PRESET_API_URL': JSON.stringify(process.env.VITE_PRESET_API_URL || ''),
+    'import.meta.env.VITE_PRESET_API_KEY': JSON.stringify(process.env.VITE_PRESET_API_KEY || ''),
+  },
   build: {
     target: 'es2020',
     rollupOptions: {
@@ -17,6 +21,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    open: true
+    host: '0.0.0.0',
+    open: false
   }
 });

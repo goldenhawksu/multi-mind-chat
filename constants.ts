@@ -6,6 +6,7 @@ export interface ApiChannel {
   apiKey: string;
   isDefault: boolean;
   isCustom: boolean;
+  isProtected?: boolean; // 新增：标记是否为受保护的预置密钥
   timeout?: number;
   headers?: Record<string, string>;
   description?: string;
@@ -36,32 +37,33 @@ export interface AiRole {
   isActive: boolean;
 }
 
-// 默认渠道配置
+// 默认渠道配置 - 预置可用的API配置
 export const DEFAULT_CHANNELS: ApiChannel[] = [
   {
     id: 'openai-official',
     name: 'OpenAI 官方',
     baseUrl: 'https://api.openai.com/v1',
-    apiKey: '',
+    apiKey: '', // 用户需要自行配置
     isDefault: true,
     isCustom: false,
+    isProtected: false,
     timeout: 30000,
-    description: 'OpenAI 官方API服务',
+    description: 'OpenAI 官方API服务（需要配置API密钥）',
     createdAt: new Date()
   }
 ];
 
-// 默认预设模型配置（仅一个，关联到默认渠道）
+// 默认预设模型配置（关联到预置渠道）
 export const DEFAULT_MODELS: AiModel[] = [
   {
     id: 'gpt-4-mini-default',
     name: 'GPT-4.1 Mini',
     apiName: 'gpt-4.1-mini',
-    channelId: 'openai-official',
+    channelId: 'openai-official', // 更新为新的默认渠道ID
     supportsImages: true,
     supportsReducedCapacity: true,
     category: 'GPT-4系列',
-    maxTokens: 16384,
+    maxTokens: 16384, 
     temperature: 0.7,
     isCustom: false,
     createdAt: new Date()
@@ -107,8 +109,8 @@ export const DEFAULT_ROLES: AiRole[] = [
 记住：你是Muse，独一无二的创意思考家。`,
     modelId: 'gpt-4-mini-default',
     isActive: true
-    },
-//spark - 偶尔闪现灵感型
+  },
+  //spark - 偶尔闪现灵感型
   {
     id: 'spark-default',
     name: 'Spark',
@@ -388,7 +390,9 @@ export class ModelConfigManager {
       }
     }
     
-    if (!channel.apiKey?.trim()) {
+    // 对于预置渠道，API密钥可以为空（将在使用时提醒用户配置）
+    // 对于自定义渠道，仍然要求API密钥
+    if (channel.isCustom && !channel.apiKey?.trim()) {
       errors.push('API密钥不能为空');
     }
     
@@ -683,28 +687,26 @@ export const MIN_MANUAL_FIXED_TURNS = 1;
 export const MAX_MANUAL_FIXED_TURNS = 5;
 export const MAX_AI_DRIVEN_DISCUSSION_TURNS_PER_MODEL = 3;
 
-export const INITIAL_NOTEPAD_CONTENT = `这是一个共享记事本。
-AI角色可以在这里合作记录想法、草稿或关键点。
+// 修复：初始记事本内容设为空，避免AI误引用
+export const INITIAL_NOTEPAD_CONTENT = ``;
 
-使用指南:
-- AI 模型可以通过在其回复中包含特定指令来更新此记事本。
-- 记事本的内容将包含在发送给 AI 的后续提示中。
-
-初始状态：空白。`;
-
+// 优化：明确说明记事本内容仅供参考，不应在回复中重复
 export const NOTEPAD_INSTRUCTION_PROMPT_PART = `
-You also have access to a shared notepad.
+You also have access to a shared notepad for collaborative note-taking.
 Current Notepad Content:
 ---
 {notepadContent}
 ---
-Instructions for Notepad:
+IMPORTANT: The notepad content above is for your reference only. Do NOT repeat or quote the notepad content in your response unless specifically relevant to your answer.
+
+Instructions for Notepad Updates:
 1. To update the notepad, include a section at the very end of your response, formatted exactly as:
    <notepad_update>
    [YOUR NEW FULL NOTEPAD CONTENT HERE. THIS WILL REPLACE THE ENTIRE CURRENT NOTEPAD CONTENT.]
    </notepad_update>
 2. If you do not want to change the notepad, do NOT include the <notepad_update> section at all.
 3. Your primary spoken response to the ongoing discussion should come BEFORE any <notepad_update> section. Ensure you still provide a spoken response.
+4. Only update the notepad when you have important information to record, not for every response.
 `;
 
 export const NOTEPAD_UPDATE_TAG_START = "<notepad_update>";

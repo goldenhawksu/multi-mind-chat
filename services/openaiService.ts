@@ -41,7 +41,8 @@ export const generateResponse = async (
   imagePart?: { inlineData: { mimeType: string; data: string } },
   customBaseUrl?: string,
   apiKey?: string,
-  onStreamChunk?: (newChunk: string, fullText: string, isComplete: boolean) => void
+  onStreamChunk?: (newChunk: string, fullText: string, isComplete: boolean) => void,
+  maxTokens?: number  // 新增参数
 ): Promise<OpenAIResponse> => {
   const startTime = performance.now();
   
@@ -87,9 +88,11 @@ export const generateResponse = async (
     const requestBody = {
       model: modelName,
       messages: messages,
-      stream: !!onStreamChunk, // 只有提供回调时才使用流式
+      stream: !!onStreamChunk,
       temperature: shouldUseReducedCapacity ? 0.3 : 0.7,
-      max_tokens: shouldUseReducedCapacity ? 1000 : 4000
+      max_tokens: shouldUseReducedCapacity 
+        ? Math.min(1000, maxTokens || 4000)  // 快速模式下使用较小值
+        : (maxTokens || 4000)  // 使用传入的 maxTokens 或默认值
     };
 
     const apiBase = customBaseUrl || DEFAULT_OPENAI_API_BASE;
