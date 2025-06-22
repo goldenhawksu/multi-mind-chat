@@ -75,7 +75,7 @@ export const DEFAULT_MODELS: AiModel[] = [
     channelId: 'cts-official', // 更新为新的默认渠道ID
     supportsImages: true,
     supportsReducedCapacity: true,
-    category: 'Gemini系列',
+    category: 'Gemini-2.5系列',
     maxTokens: 163840, 
     temperature: 0.7,
     isCustom: false,
@@ -88,7 +88,7 @@ export const DEFAULT_MODELS: AiModel[] = [
     channelId: 'cts-official', // 更新为新的默认渠道ID
     supportsImages: true,
     supportsReducedCapacity: true,
-    category: 'Gemini系列',
+    category: 'Gemini-2.0系列',
     maxTokens: 163840, 
     temperature: 0.7,
     isCustom: false,
