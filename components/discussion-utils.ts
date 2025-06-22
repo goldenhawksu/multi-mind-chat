@@ -120,7 +120,7 @@ export class DiscussionRecordManager {
     let transcript = '';
     
     if (includeMetadata) {
-      transcript += `=== Multi-Mind Chat 讨论记录 ===\n`;
+      transcript += `=== CTS Chat 讨论记录 ===\n`;
       transcript += `讨论ID: ${record.id}\n`;
       transcript += `开始时间: ${record.timestamp.toLocaleString()}\n`;
       transcript += `讨论模式: ${record.discussionMode}\n`;
@@ -185,7 +185,7 @@ export class DiscussionRecordManager {
 
   // 生成Markdown格式的导出
   static exportAsMarkdown(record: DiscussionRecord, options: ExportOptions): string {
-    let markdown = `# Multi-Mind Chat 讨论记录\n\n`;
+    let markdown = `# CTS Chat 讨论记录\n\n`;
     
     if (options.includeMetadata) {
       markdown += `## 基本信息\n\n`;
@@ -253,7 +253,7 @@ export class DiscussionRecordManager {
 
     markdown += `\n---\n`;
     markdown += `*导出时间: ${new Date().toLocaleString()}*\n`;
-    markdown += `*导出版本: Multi-Mind Chat v1.0*\n`;
+    markdown += `*导出版本: CTS Chat v1.0*\n`;
 
     return markdown;
   }
