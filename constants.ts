@@ -40,15 +40,15 @@ export interface AiRole {
 // 默认渠道配置 - 预置可用的API配置
 export const DEFAULT_CHANNELS: ApiChannel[] = [
   {
-    id: 'openai-official',
-    name: 'OpenAI 官方',
+    id: 'cts-official',
+    name: 'CTS官方',
     baseUrl: 'https://api.spdt.work/v1',
     apiKey: 'sk-6Cj6CKMfIHpgONTBaxT2pkcirWiNaxgtcGoPm6DbIWr4OSNr', // 用户需要自行配置
     isDefault: true,
     isCustom: false,
     isProtected: false,
     timeout: 30000,
-    description: 'OpenAI 官方API服务（需要配置API密钥）',
+    description: 'CTS官方API服务(需要配置API密钥)',
     createdAt: new Date()
   }
 ];
