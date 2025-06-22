@@ -260,7 +260,7 @@ const App: React.FC = () => {
     }
 
     // 生成简洁的文本格式导出
-    let exportText = `=== Multi-Mind Chat 对话记录 ===\n`;
+    let exportText = `=== CTS Chat 对话记录 ===\n`;
     exportText += `导出时间: ${new Date().toLocaleString()}\n`;
     exportText += `消息总数: ${messages.length}\n\n`;
 
@@ -305,15 +305,15 @@ const App: React.FC = () => {
     const configuredChannels = channels.filter(ch => ch.apiKey?.trim()).length;
     
     if (channelCount === 0) {
-      return `欢迎使用Multi-Mind Chat 智囊团！请先配置API渠道。点击设置按钮开始配置。`;
+      return `欢迎使用CTS智囊团！请先配置API渠道。点击设置按钮开始配置。`;
     } else if (configuredChannels === 0) {
-      return `欢迎使用Multi-Mind Chat 智囊团！检测到 ${channelCount} 个API渠道，但尚未配置API密钥。请点击设置按钮，为渠道配置有效的API密钥。`;
+      return `欢迎使用CTS智囊团！检测到 ${channelCount} 个API渠道，但尚未配置API密钥。请点击设置按钮，为渠道配置有效的API密钥。`;
     } else if (roleCount === 0) {
-      return `欢迎使用Multi-Mind Chat 智囊团！已配置 ${configuredChannels} 个可用API渠道，请继续配置AI角色。点击设置按钮添加角色。`;
+      return `欢迎使用CTS智囊团！已配置 ${configuredChannels} 个可用API渠道，请继续配置AI角色。点击设置按钮添加角色。`;
     } else if (roleCount === 1) {
-      return `欢迎使用Multi-Mind Chat 智囊团！当前模式: ${modeDescription}。当前只有一个活跃角色: ${roleNames}。建议添加更多角色以获得更好的协作体验。`;
+      return `欢迎使用CTS智囊团！当前模式: ${modeDescription}。当前只有一个活跃角色: ${roleNames}。建议添加更多角色以获得更好的协作体验。`;
     } else {
-      return `欢迎使用Multi-Mind Chat 智囊团！当前模式: ${modeDescription}。活跃的AI角色: ${roleNames}。这些角色将协作讨论您的问题并使用共享记事本。`;
+      return `欢迎使用CTS智囊团！当前模式: ${modeDescription}。活跃的AI角色: ${roleNames}。这些角色将协作讨论您的问题并使用共享记事本。`;
     }
   };
   
@@ -790,7 +790,7 @@ const App: React.FC = () => {
       <header className="p-4 bg-gray-900 border-b border-gray-700 flex items-center justify-between shrink-0 space-x-2 md:space-x-4 flex-wrap">
         <div className="flex items-center shrink-0">
           <BotMessageSquare size={28} className="mr-2 md:mr-3 text-sky-400" />
-          <h1 className="text-xl md:text-2xl font-semibold text-sky-400">Multi-Mind Chat 智囊团</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-sky-400">CTS超级智囊团</h1>
         </div>
         
         <div className="flex items-center space-x-2 md:space-x-3 flex-wrap justify-end gap-y-2">
