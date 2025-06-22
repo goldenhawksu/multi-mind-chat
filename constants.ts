@@ -67,7 +67,20 @@ export const DEFAULT_MODELS: AiModel[] = [
     temperature: 0.7,
     isCustom: false,
     createdAt: new Date()
-  }
+  },
+  {
+    id: 'gemini-2.5-flash-default',
+    name: 'Gemini-2.5-flash',
+    apiName: 'gemini-2.5-flash',
+    channelId: 'cts-official', // 更新为新的默认渠道ID
+    supportsImages: true,
+    supportsReducedCapacity: true,
+    category: 'Gemini系列',
+    maxTokens: 163840, 
+    temperature: 0.7,
+    isCustom: false,
+    createdAt: new Date()
+  }  
 ];
 
 // 默认角色配置 - 使用中文系统提示词并明确身份认知
