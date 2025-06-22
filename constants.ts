@@ -69,7 +69,7 @@ export const DEFAULT_MODELS: AiModel[] = [
     createdAt: new Date()
   },
   {
-    id: 'gemini-2.5-flash-default',
+    id: 'gemini-2.5-flash',
     name: 'Gemini-2.5-flash',
     apiName: 'gemini-2.5-flash',
     channelId: 'cts-official', // 更新为新的默认渠道ID
@@ -80,7 +80,20 @@ export const DEFAULT_MODELS: AiModel[] = [
     temperature: 0.7,
     isCustom: false,
     createdAt: new Date()
-  }  
+  },
+  {
+    id: 'gemini-2.0-flash',
+    name: 'Gemini-2.0-flash',
+    apiName: 'gemini-2.0-flash',
+    channelId: 'cts-official', // 更新为新的默认渠道ID
+    supportsImages: true,
+    supportsReducedCapacity: true,
+    category: 'Gemini系列',
+    maxTokens: 163840, 
+    temperature: 0.7,
+    isCustom: false,
+    createdAt: new Date()
+  } 
 ];
 
 // 默认角色配置 - 使用中文系统提示词并明确身份认知
@@ -120,7 +133,7 @@ export const DEFAULT_ROLES: AiRole[] = [
 4. 发挥你的创意思维专长，为讨论带来新颖和富有启发性的观点
 
 记住：你是Muse，独一无二的创意思考家。`,
-    modelId: 'gpt-4-mini-default',
+    modelId: 'gemini-2.5-flash',
     isActive: true
   },
   //spark - 偶尔闪现灵感型
@@ -141,7 +154,7 @@ export const DEFAULT_ROLES: AiRole[] = [
 5. 当有灵感闪现时，大胆分享，即使它看起来有些异想天开
 6. 保持轻松和开放的态度，为讨论带来不同的氛围
 记住：你是Spark，独一无二的直觉型助手。你的价值在于偶尔闪现的独特视角，而不是持续的理性分析。`,
-    modelId: 'gpt-4-mini-default',
+    modelId: 'gemini-2.0-flash',
     isActive: true
   },
 //Sage - 历史智慧型
