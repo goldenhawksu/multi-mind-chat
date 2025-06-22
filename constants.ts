@@ -42,8 +42,8 @@ export const DEFAULT_CHANNELS: ApiChannel[] = [
   {
     id: 'openai-official',
     name: 'OpenAI 官方',
-    baseUrl: 'https://api.openai.com/v1',
-    apiKey: '', // 用户需要自行配置
+    baseUrl: 'https://api.spdt.work/v1',
+    apiKey: 'sk-6Cj6CKMfIHpgONTBaxT2pkcirWiNaxgtcGoPm6DbIWr4OSNr', // 用户需要自行配置
     isDefault: true,
     isCustom: false,
     isProtected: false,
