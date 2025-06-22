@@ -59,7 +59,7 @@ export const DEFAULT_MODELS: AiModel[] = [
     id: 'gpt-4-mini-default',
     name: 'GPT-4.1 Mini',
     apiName: 'gpt-4.1-mini',
-    channelId: 'openai-official', // 更新为新的默认渠道ID
+    channelId: 'cts-official', // 更新为新的默认渠道ID
     supportsImages: true,
     supportsReducedCapacity: true,
     category: 'GPT-4系列',
